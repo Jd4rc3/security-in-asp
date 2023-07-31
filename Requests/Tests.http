@@ -1,0 +1,6 @@
+﻿### Get Games
+# curl -X 'GET' 
+#  'https://localhost:7246/api/Game' 
+#  -H 'accept: text/plain'
+GET https://localhost:7246/api/Game
+accept: text/plain
