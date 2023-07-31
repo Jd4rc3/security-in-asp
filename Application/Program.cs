@@ -1,5 +1,9 @@
 using System.Text;
+using Infraestructure;
+using Infraestructure.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Utils;
 
@@ -13,6 +17,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<Settings>(builder.Configuration.GetRequiredSection(Settings.Section));
 
+//SQL SERVER CONNECTION STRING SETUP
+builder.Services.AddDbContext<UserIdentityDbContext>(opts =>
+    opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// JWT CONFIGURATION
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -38,6 +47,11 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.SecurityKey))
     };
 });
+
+//IDENTITY CONFIGURATION
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<UserIdentityDbContext>()
+    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 
